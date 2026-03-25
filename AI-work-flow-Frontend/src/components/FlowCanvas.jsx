@@ -12,7 +12,7 @@ import "reactflow/dist/style.css";
 
 import TextInputNode from "./TextInputNode";
 import ResultNode from "./ResultNode";
-import { askAI } from "../api/api"; 
+import { askAI, saveFlow } from "../api/api";  // ✅ added saveFlow
 
 const nodeTypes = {
   textInput: TextInputNode,
@@ -44,6 +44,7 @@ const initialEdges = [
 
 const FlowCanvas = () => {
   const [prompt, setPrompt] = useState("");
+  const [response, setResponse] = useState(""); // ✅ added
   const [loading, setLoading] = useState(false);
 
   const [nodes, setNodes, onNodesChange] =
@@ -62,8 +63,7 @@ const FlowCanvas = () => {
     try {
       setLoading(true);
 
-      // ✅ call deployed API
-      const response = await askAI(prompt);
+      const aiResponse = await askAI(prompt);
 
       const updatedNodes = nodes.map((node) => {
         if (node.id === "2") {
@@ -71,7 +71,7 @@ const FlowCanvas = () => {
             ...node,
             data: {
               ...node.data,
-              response: response,
+              response: aiResponse,
             },
           };
         }
@@ -79,12 +79,24 @@ const FlowCanvas = () => {
       });
 
       setNodes(updatedNodes);
+      setResponse(aiResponse); // ✅ added
 
     } catch (error) {
       console.error(error);
       alert("Error getting AI response");
     } finally {
       setLoading(false);
+    }
+  };
+
+  // ✅ Save handler
+  const handleSave = async () => {
+    try {
+      await saveFlow(prompt, response);
+      alert("Saved successfully!");
+    } catch (error) {
+      console.error(error);
+      alert("Error saving flow");
     }
   };
 
@@ -143,6 +155,26 @@ const FlowCanvas = () => {
           </div>
         </div>
       )}
+
+      {/* Save Button */}
+      <button
+        onClick={handleSave}
+        style={{
+          position: "absolute",
+          zIndex: 10,
+          top: 10,
+          right: 140,
+          padding: "10px 20px",
+          background: "#10b981",
+          color: "white",
+          border: "none",
+          borderRadius: "8px",
+          cursor: "pointer",
+          fontWeight: "bold",
+        }}
+      >
+        Save Flow
+      </button>
 
       {/* Run Button */}
       <button
