@@ -8,10 +8,13 @@ Users can type a prompt, click **Run Flow**, view AI response, and **Save the re
 # 🚀 Live Demo
 
 Frontend:  
-(Add your Netlify/Vercel link here)
+https://ai-work-flow.netlify.app/
 
 Backend:  
 https://ai-work-flow.onrender.com
+
+endpoint of backend api
+https://ai-work-flow.onrender.com/api/ask-ai
 
 ---
 
