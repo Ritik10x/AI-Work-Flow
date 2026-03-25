@@ -12,7 +12,7 @@ import "reactflow/dist/style.css";
 
 import TextInputNode from "./TextInputNode";
 import ResultNode from "./ResultNode";
-import axios from "axios";
+import { askAI } from "../api/api"; 
 
 const nodeTypes = {
   textInput: TextInputNode,
@@ -62,10 +62,8 @@ const FlowCanvas = () => {
     try {
       setLoading(true);
 
-      const res = await axios.post(
-        "http://localhost:5000/api/ask-ai",
-        { prompt }
-      );
+      // ✅ call deployed API
+      const response = await askAI(prompt);
 
       const updatedNodes = nodes.map((node) => {
         if (node.id === "2") {
@@ -73,7 +71,7 @@ const FlowCanvas = () => {
             ...node,
             data: {
               ...node.data,
-              response: res.data.response,
+              response: response,
             },
           };
         }
